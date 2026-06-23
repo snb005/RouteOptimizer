@@ -1,0 +1,1 @@
+export { parseGoogleMapsLink } from "./parseGoogleMapsLink";

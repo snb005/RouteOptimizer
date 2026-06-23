@@ -1,0 +1,179 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   ION LAYER — Design Tokens, Pseudo-class Utilities & Stroke Tags
+   The lowest-level "sub-atomic" primitives. No HTML — just CSS.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── 1. Color Palette Tokens ──────────────────────────────────────────────── */
+:root {
+  /* Surfaces */
+  --ion-surface:          #ffffff;
+  --ion-surface-raised:   #f9fafb;
+  --ion-surface-sunken:   #f3f4f6;
+  --ion-surface-overlay:  rgba(255, 255, 255, 0.92);
+
+  /* Brand */
+  --ion-brand-500:        #3b82f6;
+  --ion-brand-600:        #2563eb;
+  --ion-brand-700:        #1d4ed8;
+  --ion-brand-50:         #eff6ff;
+  --ion-brand-100:        #dbeafe;
+
+  /* Neutral */
+  --ion-neutral-50:       #f9fafb;
+  --ion-neutral-100:      #f3f4f6;
+  --ion-neutral-200:      #e5e7eb;
+  --ion-neutral-300:      #d1d5db;
+  --ion-neutral-400:      #9ca3af;
+  --ion-neutral-500:      #6b7280;
+  --ion-neutral-700:      #374151;
+  --ion-neutral-800:      #1f2937;
+  --ion-neutral-900:      #111827;
+
+  /* Semantic */
+  --ion-success-50:       #f0fdf4;
+  --ion-success-100:      #dcfce7;
+  --ion-success-700:      #15803d;
+  --ion-danger-50:        #fef2f2;
+  --ion-danger-400:       #f87171;
+  --ion-danger-500:       #ef4444;
+  --ion-purple-50:        #faf5ff;
+  --ion-purple-100:       #f3e8ff;
+  --ion-purple-700:       #7c3aed;
+
+  /* Route badge colors */
+  --ion-route-1:  #3B82F6;
+  --ion-route-2:  #EF4444;
+  --ion-route-3:  #10B981;
+  --ion-route-4:  #F59E0B;
+  --ion-route-5:  #8B5CF6;
+  --ion-route-6:  #EC4899;
+  --ion-route-7:  #06B6D4;
+  --ion-route-8:  #F97316;
+  --ion-route-9:  #6366F1;
+  --ion-route-10: #14B8A6;
+
+  /* ─── 2. Spacing Scale ─────────────────────────────────────────────────── */
+  --ion-space-0:   0;
+  --ion-space-0_5: 0.125rem;   /*  2px */
+  --ion-space-1:   0.25rem;    /*  4px */
+  --ion-space-1_5: 0.375rem;   /*  6px */
+  --ion-space-2:   0.5rem;     /*  8px */
+  --ion-space-3:   0.75rem;    /* 12px */
+  --ion-space-4:   1rem;       /* 16px */
+  --ion-space-6:   1.5rem;     /* 24px */
+  --ion-space-8:   2rem;       /* 32px */
+
+  /* ─── 3. Radii ─────────────────────────────────────────────────────────── */
+  --ion-radius-sm:   0.5rem;
+  --ion-radius-md:   0.75rem;
+  --ion-radius-lg:   1rem;
+  --ion-radius-xl:   1.25rem;
+  --ion-radius-full: 9999px;
+
+  /* ─── 4. Shadows ───────────────────────────────────────────────────────── */
+  --ion-shadow-xs:   0 1px 2px rgba(0,0,0,0.04);
+  --ion-shadow-sm:   0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --ion-shadow-md:   0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.04);
+  --ion-shadow-lift: 0 8px 24px rgba(0,0,0,0.10);
+
+  /* ─── 5. Transitions ───────────────────────────────────────────────────── */
+  --ion-ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ion-dur-fast:    120ms;
+  --ion-dur-normal:  200ms;
+  --ion-dur-slow:    320ms;
+
+  /* ─── 6. Stroke / Ring ─────────────────────────────────────────────────── */
+  --ion-ring-width:  2px;
+  --ion-ring-color:  rgba(59, 130, 246, 0.45);
+  --ion-ring-offset: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ION: Pseudo-class Utility Classes
+   Reusable hover / focus / active / disabled / stroke states.
+   Apply these classes on any element for consistent interaction feedback.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Hover: subtle lift & tint ──────────────────────────────────────────── */
+.ion-hover-lift {
+  transition: transform var(--ion-dur-normal) var(--ion-ease-out),
+              box-shadow var(--ion-dur-normal) var(--ion-ease-out);
+}
+.ion-hover-lift:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--ion-shadow-lift);
+}
+
+.ion-hover-brighten {
+  transition: filter var(--ion-dur-fast) var(--ion-ease-out);
+}
+.ion-hover-brighten:hover {
+  filter: brightness(1.08);
+}
+
+.ion-hover-tint {
+  transition: background-color var(--ion-dur-fast) var(--ion-ease-out);
+}
+.ion-hover-tint:hover {
+  background-color: var(--ion-neutral-100);
+}
+
+/* ── Focus: visible ring ────────────────────────────────────────────────── */
+.ion-focus-ring {
+  outline: none;
+  transition: box-shadow var(--ion-dur-fast) var(--ion-ease-out),
+              border-color var(--ion-dur-fast) var(--ion-ease-out);
+}
+.ion-focus-ring:focus-visible {
+  box-shadow: 0 0 0 var(--ion-ring-offset) var(--ion-surface),
+              0 0 0 calc(var(--ion-ring-offset) + var(--ion-ring-width)) var(--ion-ring-color);
+}
+
+/* ── Active / Pressed: scale down ───────────────────────────────────────── */
+.ion-active-press {
+  transition: transform var(--ion-dur-fast) var(--ion-ease-out);
+}
+.ion-active-press:active {
+  transform: scale(0.97);
+}
+
+/* ── Disabled: faded out ────────────────────────────────────────────────── */
+.ion-disabled {
+  opacity: 0.55;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+/* ── Stroke tags: decorative border highlight ───────────────────────────── */
+.ion-stroke-brand {
+  border: 1px solid var(--ion-brand-100);
+  transition: border-color var(--ion-dur-normal) var(--ion-ease-out);
+}
+.ion-stroke-brand:hover {
+  border-color: var(--ion-brand-500);
+}
+
+.ion-stroke-danger {
+  border: 1px solid var(--ion-danger-400);
+}
+.ion-stroke-danger:focus-visible {
+  box-shadow: 0 0 0 var(--ion-ring-offset) var(--ion-surface),
+              0 0 0 calc(var(--ion-ring-offset) + var(--ion-ring-width)) rgba(239, 68, 68, 0.35);
+}
+
+.ion-stroke-subtle {
+  border: 1px solid var(--ion-neutral-200);
+  transition: border-color var(--ion-dur-fast) var(--ion-ease-out);
+}
+.ion-stroke-subtle:hover {
+  border-color: var(--ion-neutral-300);
+}
+
+/* ── Pulse animation for loading states ─────────────────────────────────── */
+@keyframes ion-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.55; }
+}
+.ion-pulse {
+  animation: ion-pulse 1.8s var(--ion-ease-out) infinite;
+}
