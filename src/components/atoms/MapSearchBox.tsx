@@ -27,6 +27,10 @@ export default function MapSearchBox({ onPlaceSelect, onRawInput }: MapSearchBox
   useEffect(() => {
     if (!autocomplete) return;
     const listener = autocomplete.addListener("place_changed", () => {
+      // ── LOG BILLING ──
+      fetch("/api/log", { method: "POST", body: JSON.stringify({ apiName: "Places Autocomplete API", endpoint: "Autocomplete Widget" }) });
+      fetch("/api/log", { method: "POST", body: JSON.stringify({ apiName: "Places Details API", endpoint: "Autocomplete.getPlace" }) });
+
       const place = autocomplete.getPlace();
       if (place.geometry?.location) {
         onPlaceSelect(place);
@@ -50,12 +54,19 @@ export default function MapSearchBox({ onPlaceSelect, onRawInput }: MapSearchBox
 
     if (!places) return;
 
+    // ── LOG BILLING ──
+    fetch("/api/log", { method: "POST", body: JSON.stringify({ apiName: "Places Autocomplete API", endpoint: "AutocompleteService.getPlacePredictions" }) });
+
     // Fetch the very first prediction and lock on
     const service = new places.AutocompleteService();
     service.getPlacePredictions({ input: val }, (predictions, status) => {
       if (status === "OK" && predictions && predictions[0]) {
         const placeId = predictions[0].place_id;
         const detailsService = new places.PlacesService(document.createElement("div"));
+        
+        // ── LOG BILLING ──
+        fetch("/api/log", { method: "POST", body: JSON.stringify({ apiName: "Places Details API", endpoint: "PlacesService.getDetails" }) });
+
         detailsService.getDetails({ placeId, fields: ["geometry"] }, (place, detailStatus) => {
           if (detailStatus === "OK" && place?.geometry?.location) {
             onPlaceSelect(place as google.maps.places.PlaceResult);

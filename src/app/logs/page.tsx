@@ -8,6 +8,8 @@ const prisma = new PrismaClient();
 const PRICING: Record<string, number> = {
   "Routes API": 0.005,
   "Dynamic Maps API": 0.007,
+  "Places Autocomplete API": 0.00283,
+  "Places Details API": 0.017,
 };
 
 export default async function LogsPage() {

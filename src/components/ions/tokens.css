@@ -1,24 +1,30 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    ION LAYER — Design Tokens, Pseudo-class Utilities & Stroke Tags
-   The lowest-level "sub-atomic" primitives. No HTML — just CSS.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ─── 1. Color Palette Tokens ──────────────────────────────────────────────── */
+/* ─── 1. Color Palette Tokens ─────────────────────────────────────────────── */
 :root {
-  /* Surfaces */
   --ion-surface:          #ffffff;
   --ion-surface-raised:   #f9fafb;
   --ion-surface-sunken:   #f3f4f6;
   --ion-surface-overlay:  rgba(255, 255, 255, 0.92);
 
-  /* Brand */
+  /* ── NEW: ion-depth layers ── */
+  --ion-depth-0:          #ffffff;          /* page base */
+  --ion-depth-1:          #f9fafb;          /* card / panel */
+  --ion-depth-2:          #f3f4f6;          /* inset / sunken */
+  --ion-depth-3:          #e5e7eb;          /* pressed / trough */
+  --ion-depth-modal:      rgba(255, 255, 255, 0.98); /* modal surface */
+  --ion-depth-overlay:    rgba(17, 24, 39, 0.45);    /* backdrop */
+  --ion-depth-scrim:      rgba(17, 24, 39, 0.08);    /* subtle scrim */
+
   --ion-brand-500:        #3b82f6;
   --ion-brand-600:        #2563eb;
   --ion-brand-700:        #1d4ed8;
   --ion-brand-50:         #eff6ff;
   --ion-brand-100:        #dbeafe;
+  --ion-brand-200:        #bfdbfe;
 
-  /* Neutral */
   --ion-neutral-50:       #f9fafb;
   --ion-neutral-100:      #f3f4f6;
   --ion-neutral-200:      #e5e7eb;
@@ -29,7 +35,6 @@
   --ion-neutral-800:      #1f2937;
   --ion-neutral-900:      #111827;
 
-  /* Semantic */
   --ion-success-50:       #f0fdf4;
   --ion-success-100:      #dcfce7;
   --ion-success-700:      #15803d;
@@ -40,7 +45,13 @@
   --ion-purple-100:       #f3e8ff;
   --ion-purple-700:       #7c3aed;
 
-  /* Route badge colors */
+  /* ── NEW: remark semantic tokens ── */
+  --ion-remark-bg:        #fffbeb;
+  --ion-remark-border:    #fde68a;
+  --ion-remark-text:      #92400e;
+  --ion-remark-icon:      #f59e0b;
+  --ion-remark-active-bg: #fef3c7;
+
   --ion-route-1:  #3B82F6;
   --ion-route-2:  #EF4444;
   --ion-route-3:  #10B981;
@@ -52,109 +63,85 @@
   --ion-route-9:  #6366F1;
   --ion-route-10: #14B8A6;
 
-  /* ─── 2. Spacing Scale ─────────────────────────────────────────────────── */
   --ion-space-0:   0;
-  --ion-space-0_5: 0.125rem;   /*  2px */
-  --ion-space-1:   0.25rem;    /*  4px */
-  --ion-space-1_5: 0.375rem;   /*  6px */
-  --ion-space-2:   0.5rem;     /*  8px */
-  --ion-space-3:   0.75rem;    /* 12px */
-  --ion-space-4:   1rem;       /* 16px */
-  --ion-space-6:   1.5rem;     /* 24px */
-  --ion-space-8:   2rem;       /* 32px */
+  --ion-space-0_5: 0.125rem;
+  --ion-space-1:   0.25rem;
+  --ion-space-1_5: 0.375rem;
+  --ion-space-2:   0.5rem;
+  --ion-space-3:   0.75rem;
+  --ion-space-4:   1rem;
+  --ion-space-6:   1.5rem;
+  --ion-space-8:   2rem;
 
-  /* ─── 3. Radii ─────────────────────────────────────────────────────────── */
   --ion-radius-sm:   0.5rem;
   --ion-radius-md:   0.75rem;
   --ion-radius-lg:   1rem;
   --ion-radius-xl:   1.25rem;
   --ion-radius-full: 9999px;
 
-  /* ─── 4. Shadows ───────────────────────────────────────────────────────── */
   --ion-shadow-xs:   0 1px 2px rgba(0,0,0,0.04);
   --ion-shadow-sm:   0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
   --ion-shadow-md:   0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.04);
   --ion-shadow-lift: 0 8px 24px rgba(0,0,0,0.10);
+  /* ── NEW: modal elevation ── */
+  --ion-shadow-modal: 0 20px 60px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.10);
 
-  /* ─── 5. Transitions ───────────────────────────────────────────────────── */
-  --ion-ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
-  --ion-dur-fast:    120ms;
-  --ion-dur-normal:  200ms;
-  --ion-dur-slow:    320ms;
+  --ion-ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
+  --ion-dur-fast:   120ms;
+  --ion-dur-normal: 200ms;
+  --ion-dur-slow:   320ms;
 
-  /* ─── 6. Stroke / Ring ─────────────────────────────────────────────────── */
   --ion-ring-width:  2px;
   --ion-ring-color:  rgba(59, 130, 246, 0.45);
   --ion-ring-offset: 2px;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════════════════
    ION: Pseudo-class Utility Classes
-   Reusable hover / focus / active / disabled / stroke states.
-   Apply these classes on any element for consistent interaction feedback.
-   ═══════════════════════════════════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════════════════════════════ */
 
-/* ── Hover: subtle lift & tint ──────────────────────────────────────────── */
 .ion-hover-lift {
-  transition: transform var(--ion-dur-normal) var(--ion-ease-out),
-              box-shadow var(--ion-dur-normal) var(--ion-ease-out);
+  transition:
+    transform var(--ion-dur-normal) var(--ion-ease-out),
+    box-shadow var(--ion-dur-normal) var(--ion-ease-out);
 }
-.ion-hover-lift:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--ion-shadow-lift);
-}
+.ion-hover-lift:hover  { transform: translateY(-1px); box-shadow: var(--ion-shadow-lift); }
+.ion-hover-lift:active { transform: scale(0.97) translateY(0); box-shadow: var(--ion-shadow-sm); }
 
-.ion-hover-brighten {
-  transition: filter var(--ion-dur-fast) var(--ion-ease-out);
-}
-.ion-hover-brighten:hover {
-  filter: brightness(1.08);
-}
+.ion-hover-brighten { transition: filter var(--ion-dur-fast) var(--ion-ease-out); }
+.ion-hover-brighten:hover  { filter: brightness(1.08); }
+.ion-hover-brighten:active { filter: brightness(0.96); }
 
-.ion-hover-tint {
-  transition: background-color var(--ion-dur-fast) var(--ion-ease-out);
-}
-.ion-hover-tint:hover {
-  background-color: var(--ion-neutral-100);
-}
+.ion-hover-tint { transition: background-color var(--ion-dur-fast) var(--ion-ease-out); }
+.ion-hover-tint:hover  { background-color: var(--ion-neutral-100); }
+.ion-hover-tint:active { background-color: var(--ion-neutral-200); }
 
-/* ── Focus: visible ring ────────────────────────────────────────────────── */
 .ion-focus-ring {
   outline: none;
-  transition: box-shadow var(--ion-dur-fast) var(--ion-ease-out),
-              border-color var(--ion-dur-fast) var(--ion-ease-out);
+  transition:
+    box-shadow var(--ion-dur-fast) var(--ion-ease-out),
+    border-color var(--ion-dur-fast) var(--ion-ease-out);
 }
 .ion-focus-ring:focus-visible {
-  box-shadow: 0 0 0 var(--ion-ring-offset) var(--ion-surface),
-              0 0 0 calc(var(--ion-ring-offset) + var(--ion-ring-width)) var(--ion-ring-color);
+  box-shadow:
+    0 0 0 var(--ion-ring-offset) var(--ion-surface),
+    0 0 0 calc(var(--ion-ring-offset) + var(--ion-ring-width)) var(--ion-ring-color);
 }
 
-/* ── Active / Pressed: scale down ───────────────────────────────────────── */
-.ion-active-press {
-  transition: transform var(--ion-dur-fast) var(--ion-ease-out);
-}
-.ion-active-press:active {
-  transform: scale(0.97);
-}
+.ion-active-press { transition: transform var(--ion-dur-fast) var(--ion-ease-out); }
+.ion-active-press:active { transform: scale(0.97); }
 
-/* ── Disabled: faded out ────────────────────────────────────────────────── */
-.ion-disabled {
-  opacity: 0.55;
-  pointer-events: none;
-  cursor: not-allowed;
-}
+.ion-disabled { opacity: 0.55; pointer-events: none; cursor: not-allowed; }
 
-/* ── Stroke tags: decorative border highlight ───────────────────────────── */
 .ion-stroke-brand {
   border: 1px solid var(--ion-brand-100);
   transition: border-color var(--ion-dur-normal) var(--ion-ease-out);
 }
-.ion-stroke-brand:hover {
-  border-color: var(--ion-brand-500);
-}
+.ion-stroke-brand:hover { border-color: var(--ion-brand-500); }
 
 .ion-stroke-danger {
   border: 1px solid var(--ion-danger-400);
+  transition: border-color var(--ion-dur-normal) var(--ion-ease-out);
 }
 .ion-stroke-danger:focus-visible {
   box-shadow: 0 0 0 var(--ion-ring-offset) var(--ion-surface),
@@ -169,7 +156,59 @@
   border-color: var(--ion-neutral-300);
 }
 
-/* ── Pulse animation for loading states ─────────────────────────────────── */
+/* ── NEW: ion-depth card utility ── */
+.ion-depth-card {
+  background: var(--ion-depth-1);
+  border: 1px solid var(--ion-neutral-200);
+  border-radius: var(--ion-radius-lg);
+  box-shadow: var(--ion-shadow-sm);
+}
+.ion-depth-inset {
+  background: var(--ion-depth-2);
+  border: 1px solid var(--ion-neutral-200);
+  border-radius: var(--ion-radius-md);
+}
+
+/* ── NEW: modal backdrop + panel ── */
+.ion-modal-backdrop {
+  position: fixed; inset: 0; z-index: 50;
+  background: var(--ion-depth-overlay);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  padding: var(--ion-space-4);
+  animation: ion-backdrop-in var(--ion-dur-normal) var(--ion-ease-out);
+}
+@keyframes ion-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.ion-modal-panel {
+  background: var(--ion-depth-modal);
+  border-radius: var(--ion-radius-xl);
+  box-shadow: var(--ion-shadow-modal);
+  border: 1px solid var(--ion-neutral-200);
+  width: 100%; max-width: 420px;
+  animation: ion-panel-in var(--ion-dur-slow) var(--ion-ease-out);
+}
+@keyframes ion-panel-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);    }
+}
+
+/* ── NEW: remark pill (shows on slot when remark saved) ── */
+.ion-remark-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px;
+  background: var(--ion-remark-bg);
+  border: 1px solid var(--ion-remark-border);
+  border-radius: var(--ion-radius-full);
+  font-size: 0.65rem;
+  color: var(--ion-remark-text);
+  max-width: 120px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* ── Pulse animation for loading states ── */
 @keyframes ion-pulse {
   0%, 100% { opacity: 1; }
   50%      { opacity: 0.55; }

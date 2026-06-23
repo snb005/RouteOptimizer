@@ -38,7 +38,7 @@ export default function ActionButton({
         py-2.5 px-4 rounded-xl font-semibold text-sm
         transition-all duration-200
         ion-focus-ring
-        ${disabled ? "ion-disabled" : VARIANT_CLASSES[variant]}
+        ${disabled ? "bg-gray-100 text-gray-600 cursor-not-allowed" : VARIANT_CLASSES[variant]}
         ${fullWidth ? "flex-1" : ""}
         ${className}
       `}

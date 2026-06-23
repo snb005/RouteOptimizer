@@ -25,3 +25,31 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Custom Light Scrollbar */
+.light-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.light-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.light-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--ion-brand-500);
+  border-radius: 8px;
+}
+
+/* Custom Dark Scrollbar */
+.dark-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.dark-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dark-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--ion-brand-700);
+  border-radius: 8px;
+}

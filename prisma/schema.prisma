@@ -1,8 +1,7 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// ═══════════════════════════════════════════════════════════════════════════
+//  PRISMA SCHEMA — RouteOptimizer
+//  CNF-Normalized: Driver → Route → RouteStop → Location
+// ═══════════════════════════════════════════════════════════════════════════
 
 generator client {
   provider = "prisma-client"
@@ -14,24 +13,97 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ─── Driver ────────────────────────────────────────────────────────────────
+// One driver entity per person/vehicle.
+// A driver can have many routes over time, but only one ACTIVE route at a time
+// enforced via the unique partial index on Route.
+
+model Driver {
+  id        String   @id @default(uuid())
+  name      String
+  phone     String?
+  vehicle   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  routes    Route[]
+}
+
+// ─── Location ──────────────────────────────────────────────────────────────
+// Pure coordinate + name entity. Reusable across many routes.
+// No route-specific data lives here (remarks go on RouteStop).
+
 model Location {
   id        String   @id @default(uuid())
   name      String
   lat       Float
   lng       Float
-  label     String   // A to J
+  raw       String?                    // original Maps link / lat,lng string
   createdAt DateTime @default(now())
+
+  routeStops RouteStop[]
+
+  @@unique([lat, lng])
 }
 
+// ─── Route ─────────────────────────────────────────────────────────────────
+// One active route per driver at a time.
+// Stores aggregate stats + cache key for Google Routes API.
+
 model Route {
-  id            String   @id @default(uuid())
-  cacheKey      String   @unique
-  totalDistance Float
-  totalDuration Float
-  encodedPolyline String @db.Text
-  orderedPath   Json
-  createdAt     DateTime @default(now())
+  id              String   @id @default(uuid())
+  cacheKey        String   @unique
+  totalDistance   Float                // meters
+  totalDuration   Float                // seconds
+  encodedPolyline String   @db.Text
+  orderedPath     Json                 // raw optimizedIntermediateWaypointIndex array
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+
+  driverId  String
+  driver    Driver     @relation(fields: [driverId], references: [id], onDelete: Cascade)
+
+  stops     RouteStop[]
+
+  // ── REMOVED: @@unique([driverId, isActive])
+  // Replaced by a partial unique index in the migration below ──
+  @@index([driverId, isActive])   // keep for query perf
 }
+
+// ─── RouteStop ─────────────────────────────────────────────────────────────
+// Junction table: Route ↔ Location with stop-specific metadata.
+// `stopOrder` is the optimized visit sequence (0-based).
+// `remark` is the driver's per-stop note.
+
+model RouteStop {
+  id         String   @id @default(uuid())
+  stopOrder  Int                        // 0 = driver origin, N = shop/dest
+  role       StopRole @default(STOP)    // DRIVER | STOP | SHOP
+  remark     String?                    // driver's note for this stop
+  visitedAt  DateTime?                  // nullable — set when driver marks visited
+  createdAt  DateTime @default(now())
+
+  routeId    String
+  route      Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
+
+  locationId String
+  location   Location @relation(fields: [locationId], references: [id])
+
+  @@unique([routeId, stopOrder])        // no two stops at same position in a route
+  @@index([routeId])
+  @@index([locationId])
+}
+
+// ─── StopRole enum ─────────────────────────────────────────────────────────
+
+enum StopRole {
+  DRIVER  // fixed origin
+  STOP    // optimizable middle stop
+  SHOP    // fixed destination
+}
+
+// ─── ApiLog ────────────────────────────────────────────────────────────────
+// Unchanged — flat audit log, no normalization needed.
 
 model ApiLog {
   id        String   @id @default(uuid())
