@@ -8,6 +8,7 @@
 import { useState } from "react";
 import { StatCard, StopListItem } from "@/components/molecules";
 import type { Location, RouteResult } from "@/components/types";
+import { useCopyRouteLink, downloadRoutePdf } from "./RoutePdf";
 
 /* ── Formatting helpers ────────────────────────────────────────────────── */
 
@@ -39,15 +40,18 @@ interface ResultPanelProps {
 }
 
 export default function ResultPanel({ result, orderedLocations }: ResultPanelProps) {
-  // ── NEW: share state and handlers ──
-  const [copied, setCopied] = useState(false);
+  const { copied, handleShare } = useCopyRouteLink(orderedLocations);
+  const [generating, setGenerating] = useState(false);
 
-  const handleShare = () => {
-    const url = buildShareUrl(orderedLocations);
-    navigator.clipboard.writeText(url).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
-    });
+  const handleDownloadPdf = async () => {
+    setGenerating(true);
+    try {
+      await downloadRoutePdf(result, orderedLocations, "Demo Driver");
+    } catch (err) {
+      console.error("Failed to generate PDF", err);
+    } finally {
+      setGenerating(false);
+    }
   };
 
   const handleOpenInMaps = () => {
@@ -57,7 +61,7 @@ export default function ResultPanel({ result, orderedLocations }: ResultPanelPro
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-4 ion-stroke-brand ion-hover-lift transition-all">
+    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-4 ion-stroke-brand transition-all">
       <h3 className="font-bold text-blue-800 mb-3 text-sm uppercase tracking-wide">
         ✅ Optimized Route
       </h3>
@@ -92,7 +96,7 @@ export default function ResultPanel({ result, orderedLocations }: ResultPanelPro
                      bg-blue-600 hover:bg-blue-700 active:scale-95
                      text-white text-sm font-semibold
                      py-2.5 px-4 rounded-xl
-                     transition-all duration-200 ion-hover-lift"
+                     transition-all duration-200 ion-hover-lift cursor-pointer"
         >
           📍 Open in Google Maps
         </button>
@@ -102,9 +106,21 @@ export default function ResultPanel({ result, orderedLocations }: ResultPanelPro
                      bg-white hover:bg-gray-50 border border-gray-200 active:scale-95
                      text-gray-700 text-sm font-semibold
                      py-2.5 px-4 rounded-xl
-                     transition-all duration-200 ion-hover-lift"
+                     transition-all duration-200 ion-hover-lift cursor-pointer"
         >
           {copied ? "✅ Link Copied!" : "🔗 Copy Share Link"}
+        </button>
+
+        <button
+          onClick={handleDownloadPdf}
+          disabled={generating}
+          className="w-full flex items-center justify-center gap-2 
+                     bg-cyan-500 hover:bg-cyan-600 active:scale-95 disabled:opacity-50
+                     text-white text-sm font-semibold
+                     py-2.5 px-4 rounded-xl
+                     transition-all duration-200 ion-hover-lift cursor-pointer"
+        >
+          {generating ? "⏳ Generating PDF..." : "📄 Download PDF"}
         </button>
       </div>
     </div>
