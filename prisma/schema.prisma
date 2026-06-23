@@ -37,5 +37,7 @@ model ApiLog {
   id        String   @id @default(uuid())
   apiName   String
   endpoint  String
+  request   Json?
+  response  Json?
   createdAt DateTime @default(now())
 }

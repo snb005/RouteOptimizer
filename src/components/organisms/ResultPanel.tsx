@@ -5,6 +5,7 @@
    Uses ion-stroke-brand for the outer border hover effect.
    ═══════════════════════════════════════════════════════════════════════════ */
 
+import { useState } from "react";
 import { StatCard, StopListItem } from "@/components/molecules";
 import type { Location, RouteResult } from "@/components/types";
 
@@ -22,6 +23,14 @@ function formatDuration(seconds: number) {
   return h > 0 ? `${h}h ${m}m` : `${m} min`;
 }
 
+// ── NEW: Build Google Maps /dir/ shareable URL from ordered lat/lng stops ──
+function buildShareUrl(stops: Location[]): string {
+  const coords = stops
+    .map((loc) => `${loc.lat},${loc.lng}`)
+    .join("/");
+  return `https://www.google.com/maps/dir/${coords}`;
+}
+
 /* ── Component ─────────────────────────────────────────────────────────── */
 
 interface ResultPanelProps {
@@ -30,6 +39,23 @@ interface ResultPanelProps {
 }
 
 export default function ResultPanel({ result, orderedLocations }: ResultPanelProps) {
+  // ── NEW: share state and handlers ──
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = () => {
+    const url = buildShareUrl(orderedLocations);
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    });
+  };
+
+  const handleOpenInMaps = () => {
+    if (orderedLocations.length < 2) return;
+    const url = buildShareUrl(orderedLocations);
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
   return (
     <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-4 ion-stroke-brand ion-hover-lift transition-all">
       <h3 className="font-bold text-blue-800 mb-3 text-sm uppercase tracking-wide">
@@ -57,6 +83,30 @@ export default function ResultPanel({ result, orderedLocations }: ResultPanelPro
           />
         ))}
       </ol>
+
+      {/* ── NEW: Share Buttons ── */}
+      <div className="mt-4 flex flex-col gap-2">
+        <button
+          onClick={handleOpenInMaps}
+          className="w-full flex items-center justify-center gap-2 
+                     bg-blue-600 hover:bg-blue-700 active:scale-95
+                     text-white text-sm font-semibold
+                     py-2.5 px-4 rounded-xl
+                     transition-all duration-200 ion-hover-lift"
+        >
+          📍 Open in Google Maps
+        </button>
+        <button
+          onClick={handleShare}
+          className="w-full flex items-center justify-center gap-2 
+                     bg-white hover:bg-gray-50 border border-gray-200 active:scale-95
+                     text-gray-700 text-sm font-semibold
+                     py-2.5 px-4 rounded-xl
+                     transition-all duration-200 ion-hover-lift"
+        >
+          {copied ? "✅ Link Copied!" : "🔗 Copy Share Link"}
+        </button>
+      </div>
     </div>
   );
 }

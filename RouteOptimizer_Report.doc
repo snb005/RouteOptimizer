@@ -1,0 +1,70 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset="utf-8">
+<title>Workspace Report</title>
+<style>
+  body { font-family: 'Calibri', sans-serif; }
+  h1 { color: #2C3E50; }
+  h2 { color: #34495E; border-bottom: 1px solid #BDC3C7; padding-bottom: 5px; }
+  .step { margin-bottom: 20px; }
+  .screenshot-placeholder { 
+    background-color: #ECF0F1; 
+    border: 2px dashed #BDC3C7; 
+    padding: 40px; 
+    text-align: center; 
+    color: #7F8C8D; 
+    font-weight: bold; 
+    margin: 15px 0;
+  }
+  code { background-color: #F8F9FA; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', Courier, monospace; }
+</style>
+</head>
+<body>
+
+<h1>RouteOptimizer - Practical Implementation Report</h1>
+<p><strong>Date:</strong> 2026-06-23</p>
+<p>This document outlines the critical practical steps taken to optimize the Google Maps routing architecture, integrate backend Prisma tracking, and modernize the frontend UI components without bloat.</p>
+
+<div class="step">
+  <h2>1. Shortlink Extraction & Expansion</h2>
+  <p><strong>Issue:</strong> The application was unable to parse Google Maps shortlinks (<code>maps.app.goo.gl</code>), resulting in 404 errors during route generation.</p>
+  <p><strong>Implementation:</strong> Created a native backend route (<code>/api/expand/route.ts</code>) that automatically resolves the HTTP redirect (<code>redirect: "follow"</code>) to extract the raw destination URL containing the precise coordinates. This bypassed frontend CORS restrictions completely.</p>
+  <div class="screenshot-placeholder">[ Insert Screenshot: Network Tab showing successful 200 OK for /api/expand ]</div>
+</div>
+
+<div class="step">
+  <h2>2. Terminology & UI Swaps</h2>
+  <p><strong>Issue:</strong> The default map routing labels ("Start" and "End") did not fit the business domain.</p>
+  <p><strong>Implementation:</strong> Replaced all validation alerts, input placeholders, and sidebar tags natively to read <strong>"Driver"</strong> and <strong>"Shop"</strong> respectively.</p>
+  <div class="screenshot-placeholder">[ Insert Screenshot: The sidebar UI showing Driver and Shop tags ]</div>
+</div>
+
+<div class="step">
+  <h2>3. Catchy Floating InfoWindows</h2>
+  <p><strong>Issue:</strong> The user requested catchy elements directly above the start (Driver) and end (Shop) map markers that were permanent and non-closable.</p>
+  <p><strong>Implementation:</strong> Injected native Google Maps <code>InfoWindow</code> objects containing styled emojis (🚕 and 🏪). To make them unclosable with minimal code, we bypassed CSS hacks and utilized the modern <code>headerDisabled: true</code> API flag.</p>
+  <div class="screenshot-placeholder">[ Insert Screenshot: The map showing the floating, unclosable Driver/Shop bubbles ]</div>
+</div>
+
+<div class="step">
+  <h2>4. Prisma Database API Tracking</h2>
+  <p><strong>Issue:</strong> Needed a way to audit the exact API calls made to Google Cloud to monitor costs and debug payloads.</p>
+  <p><strong>Implementation:</strong> Appended an <code>ApiLog</code> model to <code>schema.prisma</code> containing <code>request</code> and <code>response</code> JSON fields. Updated <code>/api/route/route.ts</code> to securely capture and inject the exact Google Maps JSON payloads upon every cache miss.</p>
+  <div class="screenshot-placeholder">[ Insert Screenshot: Prisma Studio showing the ApiLog table populated ]</div>
+</div>
+
+<div class="step">
+  <h2>5. Swagger-Style Console Dashboard</h2>
+  <p><strong>Issue:</strong> The raw API logs needed to be rendered into a digestible, side-by-side format natively within the application.</p>
+  <p><strong>Implementation:</strong> Developed the <code>/logs</code> page using Tailwind CSS to dynamically render a split-pane grid layout. The UI now visually segregates the <strong>Request Body</strong> and <strong>Response Body</strong> in stylish, dark-mode terminal blocks, mimicking the UX of Swagger UI or FastAPI.</p>
+  <div class="screenshot-placeholder">[ Insert Screenshot: The /logs dashboard showing the side-by-side request/response ]</div>
+</div>
+
+<div class="step">
+  <h2>6. Cost Matrix & Live INR Conversion</h2>
+  <p><strong>Implementation:</strong> Implemented a live matrix table calculating Google Cloud pricing dynamically ($0.005/request). Integrated an open exchange rate API to display real-time <code>USD to INR (₹)</code> conversions natively inside the cells.</p>
+  <div class="screenshot-placeholder">[ Insert Screenshot: The Cost Matrix table displaying the calculated ₹ totals ]</div>
+</div>
+
+</body>
+</html>

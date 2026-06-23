@@ -20,8 +20,8 @@ export default function StopListItem({ index, name, isFirst, isLast }: StopListI
       <span className="text-gray-700 truncate" title={name}>
         {name || `Stop ${index + 1}`}
       </span>
-      {isFirst && <StatusTag label="Start" variant="start" />}
-      {isLast  && <StatusTag label="End"   variant="end" />}
+      {isFirst && <StatusTag label="Driver" variant="start" />}
+      {isLast  && <StatusTag label="Shop"   variant="end" />}
     </li>
   );
 }

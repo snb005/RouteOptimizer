@@ -22,6 +22,7 @@ export default function RouteLayer({ locations, onResult }: Props) {
   const geometryLib = useMapsLibrary("geometry");
   const polylineRef = useRef<google.maps.Polyline | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
+  const infoWindowsRef = useRef<google.maps.InfoWindow[]>([]);
 
   useEffect(() => {
     if (!map || locations.length < 2 || !geometryLib) return;
@@ -57,6 +58,8 @@ export default function RouteLayer({ locations, onResult }: Props) {
       polylineRef.current?.setMap(null);
       markersRef.current.forEach(m => m.setMap(null));
       markersRef.current = [];
+      infoWindowsRef.current.forEach(iw => iw.close());
+      infoWindowsRef.current = [];
       const path = google.maps.geometry.encoding.decodePath(route.polyline.encodedPolyline);
       polylineRef.current = new google.maps.Polyline({
         path, map,
@@ -95,6 +98,19 @@ export default function RouteLayer({ locations, onResult }: Props) {
           },
         });
         markersRef.current.push(marker);
+
+        const isStart = idx === 0;
+        const isEnd = idx === orderedLocs.length - 1;
+        if (isStart || isEnd) {
+          const infoWindow = new google.maps.InfoWindow({
+            content: `<div style="font-weight:900; font-size:14px; font-family:sans-serif; color:${isStart ? '#10B981' : '#8B5CF6'};">${isStart ? '🚕 Driver' : '🏪 Shop'}</div>`,
+            disableAutoPan: true,
+            // @ts-ignore - removes the 'x' close button natively in Maps JS API
+            headerDisabled: true,
+          });
+          infoWindow.open(map, marker);
+          infoWindowsRef.current.push(infoWindow);
+        }
       });
 
       onResult({
@@ -110,6 +126,8 @@ export default function RouteLayer({ locations, onResult }: Props) {
       polylineRef.current?.setMap(null);
       markersRef.current.forEach(m => m.setMap(null));
       markersRef.current = [];
+      infoWindowsRef.current.forEach(iw => iw.close());
+      infoWindowsRef.current = [];
     };
   }, [map, locations, geometryLib]);
 

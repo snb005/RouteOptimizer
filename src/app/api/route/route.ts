@@ -81,6 +81,15 @@ export async function POST(req: Request) {
       data: {
         apiName: "Routes API",
         endpoint: "https://routes.googleapis.com/directions/v2:computeRoutes",
+        request: {
+          origin: body.origin,
+          destination: body.destination,
+          intermediates: body.intermediates,
+          travelMode: body.travelMode,
+          optimizeWaypointOrder: body.optimizeWaypointOrder,
+          routingPreference: body.routingPreference
+        },
+        response: data,
       }
     });
 

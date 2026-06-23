@@ -15,8 +15,8 @@ interface LocationSlotProps {
 }
 
 function placeholderFor(index: number): string {
-  if (index === 0) return "Start location (Maps link or lat,lng)";
-  if (index === SLOT_COUNT - 1) return "End location (Maps link or lat,lng)";
+  if (index === 0) return "Driver location (Maps link or lat,lng)";
+  if (index === SLOT_COUNT - 1) return "Shop location (Maps link or lat,lng)";
   return `Stop ${index + 1} (optional)`;
 }
 

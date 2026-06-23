@@ -34,7 +34,7 @@ export default function InputPanel({
         <h2 className="text-lg font-bold text-gray-800 mb-1">📍 Paste Google Maps Links</h2>
         <p className="text-xs text-gray-500">
           Paste a Google Maps share URL or plain <code className="text-xs bg-gray-100 px-1 py-0.5 rounded">lat,lng</code> for each stop.
-          First = start, Last = end. Middle stops are auto-optimized.
+          First = driver, Last = shop. Middle stops are auto-optimized.
         </p>
       </div>
 

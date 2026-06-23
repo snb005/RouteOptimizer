@@ -11,6 +11,15 @@ const PRICING: Record<string, number> = {
 };
 
 export default async function LogsPage() {
+  let exchangeRate = 83.5;
+  try {
+    const res = await fetch("https://open.er-api.com/v6/latest/USD", { next: { revalidate: 3600 } });
+    const data = await res.json();
+    if (data?.rates?.INR) exchangeRate = data.rates.INR;
+  } catch (e) {
+    console.error("Failed to fetch exchange rate", e);
+  }
+
   const logs = await prisma.apiLog.findMany({
     orderBy: { createdAt: 'desc' }
   });
@@ -52,9 +61,13 @@ export default async function LogsPage() {
                 return (
                   <tr key={apiName} className="hover:bg-gray-50 transition">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{apiName}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">${data.cost.toFixed(3)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                      ${data.cost.toFixed(3)} <span className="text-gray-400 text-xs ml-1">(₹{(data.cost * exchangeRate).toFixed(2)})</span>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-blue-600 text-right">{data.count}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-red-500 text-right">${rowCost.toFixed(3)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-red-500 text-right">
+                      ${rowCost.toFixed(3)} <span className="text-gray-400 text-xs ml-1">(₹{(rowCost * exchangeRate).toFixed(2)})</span>
+                    </td>
                   </tr>
                 );
               })}
@@ -67,7 +80,9 @@ export default async function LogsPage() {
             <tfoot className="bg-gray-100">
               <tr>
                 <th colSpan={3} scope="row" className="px-6 py-4 text-right text-sm font-extrabold text-gray-900 uppercase tracking-wider">Grand Total:</th>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-xl font-black text-gray-900">${totalCost.toFixed(3)}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-xl font-black text-gray-900">
+                  ${totalCost.toFixed(3)} <span className="text-gray-500 text-base font-bold ml-1">(₹{(totalCost * exchangeRate).toFixed(2)})</span>
+                </td>
               </tr>
             </tfoot>
           </table>
@@ -87,6 +102,44 @@ export default async function LogsPage() {
             </ul>
           </div>
         </div>
+
+        <div>
+          <h2 className="text-xl font-bold mb-4 tracking-tight text-gray-800">Console API Calls</h2>
+          <div className="bg-white rounded-2xl shadow-sm ring-1 ring-black/5 overflow-hidden">
+            <ul className="divide-y divide-gray-100 max-h-96 overflow-y-auto">
+              {logs.map((log) => (
+                <li key={log.id} className="px-6 py-3 flex flex-col text-sm hover:bg-gray-50 transition">
+                  <div className="flex justify-between items-center w-full">
+                    <span className="font-semibold text-gray-700 w-1/4">{log.apiName}</span>
+                    <span className="text-gray-400 font-mono text-xs truncate w-1/2" title={log.endpoint}>{log.endpoint}</span>
+                    <span className="text-gray-400 text-xs w-1/4 text-right">{new Date(log.createdAt).toLocaleString()}</span>
+                  </div>
+                  {(log.request || log.response) && (
+                    <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4 w-full border-t border-gray-100 pt-3">
+                      {log.request && (
+                        <div>
+                          <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Request Body</h4>
+                          <div className="bg-gray-800 text-blue-300 p-3 rounded-md overflow-x-auto text-xs font-mono shadow-inner max-h-64">
+                            <pre>{JSON.stringify(log.request, null, 2)}</pre>
+                          </div>
+                        </div>
+                      )}
+                      {log.response && (
+                        <div>
+                          <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Response Body</h4>
+                          <div className="bg-gray-900 text-green-400 p-3 rounded-md overflow-x-auto text-xs font-mono shadow-inner max-h-64">
+                            <pre>{JSON.stringify(log.response, null, 2)}</pre>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
       </div>
     </div>
   );
