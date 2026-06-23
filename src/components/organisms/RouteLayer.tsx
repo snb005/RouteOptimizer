@@ -41,6 +41,7 @@ export default function RouteLayer({ locations, onResult }: Props) {
           travelMode: "DRIVE",
           optimizeWaypointOrder: intermediates.length > 0,
           routingPreference: "TRAFFIC_AWARE",
+          locationsMetadata: locations.map((loc, idx) => ({ ...loc, label: String.fromCharCode(65 + idx) })),
         }),
       });
 

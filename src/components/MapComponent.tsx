@@ -64,6 +64,12 @@ export default function MapComponent({ apiKey }: { apiKey: string }) {
     const newErrors: (string | null)[] = Array(SLOT_COUNT).fill(null);
     const parsed: Location[] = [];
 
+    if (!inputs[0].trim() || !inputs[SLOT_COUNT - 1].trim()) {
+      alert("Please provide both the Start (A) and End (J) locations.");
+      setComputing(false);
+      return;
+    }
+
     for (let i = 0; i < inputs.length; i++) {
       const raw = inputs[i];
       if (!raw.trim()) continue;

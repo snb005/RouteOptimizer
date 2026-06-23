@@ -25,8 +25,10 @@ model Location {
 
 model Route {
   id            String   @id @default(uuid())
+  cacheKey      String   @unique
   totalDistance Float
   totalDuration Float
+  encodedPolyline String @db.Text
   orderedPath   Json
   createdAt     DateTime @default(now())
 }
